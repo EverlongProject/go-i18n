@@ -3,7 +3,7 @@ package i18n
 import (
 	"testing"
 
-	"github.com/Liam-Williams/go-i18n/i18n/bundle"
+	"github.com/EverlongProject/go-i18n/i18n/bundle"
 )
 
 var bobMap = map[string]interface{}{"Person": "Bob"}
@@ -63,7 +63,7 @@ func testFile(t *testing.T, path string) {
 
 		got := T(tc.id, args...)
 		if got != tc.want {
-			t.Error("got: %v; want: %v", got, tc.want)
+			t.Errorf("got: %v; want: %v", got, tc.want)
 		}
 	}
 }

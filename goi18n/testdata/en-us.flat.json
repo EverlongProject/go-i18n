@@ -1,7 +1,5 @@
 {
-  "program_greeting": {
-    "other": "Hello world"
-  },
+  "program_greeting": "Hello world",
 
   "person_greeting": {
     "other": "Hello {{.Person}}"

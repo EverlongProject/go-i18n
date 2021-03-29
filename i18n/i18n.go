@@ -56,9 +56,9 @@
 package i18n
 
 import (
-	"github.com/Liam-Williams/go-i18n/i18n/bundle"
-	"github.com/Liam-Williams/go-i18n/i18n/language"
-	"github.com/Liam-Williams/go-i18n/i18n/translation"
+	"github.com/EverlongProject/go-i18n/i18n/bundle"
+	"github.com/EverlongProject/go-i18n/i18n/language"
+	"github.com/EverlongProject/go-i18n/i18n/translation"
 )
 
 // TranslateFunc returns the translation of the string identified by translationID.

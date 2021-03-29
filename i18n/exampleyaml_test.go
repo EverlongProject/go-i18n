@@ -2,7 +2,7 @@ package i18n_test
 
 import (
 	"fmt"
-	"github.com/Liam-Williams/go-i18n/i18n"
+	"github.com/EverlongProject/go-i18n/i18n"
 )
 
 func ExampleYAML() {
