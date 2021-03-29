@@ -12,8 +12,8 @@ import (
 	"sync"
 	"unicode"
 
-	"github.com/Liam-Williams/go-i18n/i18n/language"
-	"github.com/Liam-Williams/go-i18n/i18n/translation"
+	"github.com/EverlongProject/go-i18n/i18n/language"
+	"github.com/EverlongProject/go-i18n/i18n/translation"
 	toml "github.com/pelletier/go-toml"
 	"gopkg.in/yaml.v2"
 )
@@ -96,7 +96,7 @@ func parseTranslations(filename string, buf []byte) ([]translation.Translation, 
 			return nil, err
 		}
 
-		m := make(map[string]map[string]interface{})
+		m := make(map[string]interface{})
 		for k, v := range tree.ToMap() {
 			m[k] = v.(map[string]interface{})
 		}
@@ -112,7 +112,7 @@ func parseTranslations(filename string, buf []byte) ([]translation.Translation, 
 		}
 		return parseStandardFormat(standardFormat)
 	} else {
-		var flatFormat map[string]map[string]interface{}
+		var flatFormat map[string]interface{}
 		if err := unmarshal(ext, buf, &flatFormat); err != nil {
 			return nil, fmt.Errorf("failed to unmarshal %v: %v", filename, err)
 		}
@@ -185,20 +185,36 @@ func parseStandardFormat(data []map[string]interface{}) ([]translation.Translati
 // and passes it to parseStandardFormat.
 //
 // Flat format logic:
-// key of data must be a string and data[key] must be always map[string]interface{},
+// key of data must be a string and data[key] must be either a string or a map[string]interface{},
 // but if there is only "other" key in it then it is non-plural, else plural.
-func parseFlatFormat(data map[string]map[string]interface{}) ([]translation.Translation, error) {
+func parseFlatFormat(data map[string]interface{}) ([]translation.Translation, error) {
 	var standardFormatData []map[string]interface{}
 	for id, translationData := range data {
 		dataObject := make(map[string]interface{})
 		dataObject["id"] = id
-		if len(translationData) == 1 { // non-plural form
-			_, otherExists := translationData["other"]
-			if otherExists {
-				dataObject["translation"] = translationData["other"]
+		switch t := translationData.(type) {
+		case map[string]interface{}:
+			if len(t) == 1 { // non-plural form
+				_, otherExists := t["other"]
+				if otherExists {
+					dataObject["translation"] = t["other"]
+				}
+			} else { // plural form
+				dataObject["translation"] = t
 			}
-		} else { // plural form
-			dataObject["translation"] = translationData
+		case map[interface{}]interface{}: // YAML unmarshals in this format, since keys might not be strings
+			if len(t) == 1 { // non-plural form
+				_, otherExists := t["other"]
+				if otherExists {
+					dataObject["translation"] = t["other"]
+				}
+			} else { // plural form
+				dataObject["translation"] = t
+			}
+		case string:
+			dataObject["translation"] = t
+		default:
+			panic(fmt.Sprintf("HMM? %v", reflect.TypeOf(translationData)))
 		}
 
 		standardFormatData = append(standardFormatData, dataObject)
