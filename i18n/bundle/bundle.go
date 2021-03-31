@@ -5,11 +5,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"html/template"
 	"io/ioutil"
 	"path/filepath"
 	"reflect"
 	"sync"
+	"text/template"
 	"unicode"
 
 	"github.com/EverlongProject/go-i18n/i18n/language"
