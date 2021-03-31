@@ -162,6 +162,22 @@ func TestTfuncAndLanguage(t *testing.T) {
 	}
 }
 
+func TestFallbackTemplateEncoding(t *testing.T) {
+	b := New()
+	translationID := "id with param: {{.param}}"
+	frenchLanguage := languageWithTag("fr-FR")
+	addFakeTranslation(t, b, frenchLanguage, "unused")
+	frenchT, _, err := b.TfuncAndLanguage("fr-FR")
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected := "id with param: a & b"
+	got := frenchT(translationID, map[string]interface{}{"param": "a & b"}) // we expect the '&' to be preserved
+	if got != expected {
+		t.Errorf("translation was %s; expected %s", got, expected)
+	}
+}
+
 func TestConcurrent(t *testing.T) {
 	b := New()
 	// bootstrap bundle
